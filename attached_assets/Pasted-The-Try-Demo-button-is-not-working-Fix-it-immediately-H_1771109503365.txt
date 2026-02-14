@@ -1,0 +1,31 @@
+The "Try Demo" button is not working. Fix it immediately. Here's exactly what it needs to do:
+
+1. When the user clicks "Try Demo" in the nav bar, it should skip the entire onboarding flow
+2. It should automatically create a hardcoded demo profile with this data:
+   - Name: "Alex"
+   - Age: 34
+   - Neighborhood: "Mission District, SF"
+   - Gender: "Woman"
+   - Pronouns: "She/her"
+   - Interested in: ["Men", "Women"]
+   - Values: ["Authenticity", "Growth", "Creativity"]
+   - Friday night: "Try a new restaurant"
+   - Relationship goal: "A serious relationship"
+   - Communication style: "Warm and nurturing"
+   - Non-negotiables: ["Emotional availability", "Intellectual connection"]
+   - Love language: "Quality Time"
+   - Conflict style: "Need space first then talk"
+   - Committed relationship vision: "A partnership where we challenge and support each other equally"
+   - Past relationship lesson: "I learned that compatibility in values matters more than chemistry alone"
+   - Surprise fact: "I speak three languages and make pottery on weekends"
+   - Dietary: ["No restrictions"]
+   - Safety agreements: all true
+   - References: [{name: "Jordan Lee", email: "jordan@email.com", relationship: "Close friend"}, {name: "Sam Rivera", email: "sam@email.com", relationship: "Colleague"}]
+
+3. It should POST this profile to /api/profiles, then immediately call /api/match with that profile ID, then navigate directly to the results page with the matching data
+
+4. If the API call fails for ANY reason, have a complete hardcoded fallback response with 3 gatherings, each with 4 people, different event types, match reasons, trust badges, and conversation starters. The results page should ALWAYS show something — never a blank screen or error.
+
+5. Test that clicking "Try Demo" from the landing page goes: loading screen with animation → results page with 3 gatherings. The whole flow should take under 10 seconds.
+
+This is for a hackathon demo recording happening in 30 minutes. It MUST work reliably every single time.
