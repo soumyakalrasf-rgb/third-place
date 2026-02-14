@@ -1,0 +1,26 @@
+Create a React app called "Third Place" — an AI-powered platform that matches compatible people into small groups and generates curated IRL micro-events for them. This is for serious daters aged 30+ who want to meet people in real life through low-pressure group gatherings instead of 1:1 dates.
+
+Tech stack:
+- React frontend (single page app with react-router)
+- Express.js backend
+- No database — use in-memory storage (arrays/objects) for the demo
+- Clean, modern, warm UI — think premium but approachable. Use a color palette of warm ivory (#FFFAF5), soft terracotta (#C4704B), deep plum (#4A2040), and sage green (#7A8B6F). Use the font Inter from Google Fonts.
+
+Start by building the landing page with:
+1. A hero section with:
+   - Headline: "Stop Swiping. Start Gathering."
+   - Subheadline: "Third Place matches you with a curated group of compatible people and plans the perfect outing. No awkward first dates — just real connections."
+   - A prominent "Find Your Gathering" CTA button
+2. A "How It Works" section with 3 steps:
+   - Step 1: "Share What Matters" — answer a few thoughtful questions about your values and lifestyle
+   - Step 2: "We Find Your People" — our AI clusters you with 4-6 compatible people in your area
+   - Step 3: "Show Up & Connect" — attend a curated micro-event designed around your group's shared interests
+3. A section called "Why Third Place?" with 3 value props:
+   - "Built for Serious Connection" — no swiping, no ghosting, just intentional gatherings
+   - "Group First, Less Pressure" — meet 4-6 people at once in a relaxed setting
+   - "AI That Gets You" — matched on values, lifestyle, and what actually matters for long-term compatibility
+4. A footer with "Built with ❤️ at the Build What You Love Hackathon"
+
+The CTA button should navigate to /onboarding. Don't build that page yet — just set up the route.
+
+Make the design feel premium, warm, and human. Add subtle animations on scroll. This should NOT look like a typical hackathon project — it should feel like a real product.
