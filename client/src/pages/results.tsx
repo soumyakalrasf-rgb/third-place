@@ -2,7 +2,9 @@ import { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Sparkles, MapPin, Clock, MessageCircle, Users, Calendar, Check } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Sparkles, MapPin, Clock, MessageCircle, Users, Calendar, Check, Share2, Cpu } from "lucide-react";
 import confetti from "canvas-confetti";
 
 interface MatchMember {
@@ -35,7 +37,10 @@ export default function Results() {
   const [matchResult, setMatchResult] = useState<MatchResult | null>(null);
   const [rsvpd, setRsvpd] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [showShareCard, setShowShareCard] = useState(false);
+  const [copied, setCopied] = useState(false);
   const confettiFired = useRef(false);
+  const chimePlayed = useRef(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -53,6 +58,17 @@ export default function Results() {
       requestAnimationFrame(() => setVisible(true));
     });
   }, []);
+
+  useEffect(() => {
+    if (visible && matchResult && !chimePlayed.current) {
+      chimePlayed.current = true;
+      try {
+        const audio = new Audio("/chime.wav");
+        audio.volume = 0.35;
+        audio.play().catch(() => {});
+      } catch {}
+    }
+  }, [visible, matchResult]);
 
   const handleRsvp = () => {
     setRsvpd(true);
@@ -84,6 +100,18 @@ export default function Results() {
     }
   };
 
+  const handleCopyShare = async () => {
+    if (!matchResult) return;
+    const text = `I'm going to "${matchResult.event.title}" with Third Place! Want to join the next one? Check it out: thirdplace.app`;
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  };
+
   if (!matchResult) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -102,6 +130,13 @@ export default function Results() {
       style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(20px)" }}
     >
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-24 pb-12 sm:py-16">
+
+        <div className="flex justify-center mb-8" data-testid="badge-ai-powered">
+          <Badge variant="outline" className="gap-1.5 text-xs border-primary/30 text-muted-foreground">
+            <Cpu className="h-3 w-3" />
+            AI-Powered Matching
+          </Badge>
+        </div>
 
         <section className="mb-14" data-testid="section-event">
           <div className="text-center mb-10">
@@ -202,7 +237,6 @@ export default function Results() {
             <div>
               <Button
                 size="lg"
-                className="text-lg px-10"
                 onClick={handleRsvp}
                 data-testid="button-rsvp"
               >
@@ -233,9 +267,13 @@ export default function Results() {
                 We'll send you the details. See you Saturday!
                 <Sparkles className="h-4 w-4 text-foreground/50 inline" />
               </p>
-              <div className="mt-6">
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                <Button variant="outline" onClick={() => setShowShareCard(true)} data-testid="button-share">
+                  <Share2 className="mr-2 h-4 w-4" />
+                  Share with a Friend
+                </Button>
                 <Link href="/">
-                  <Button variant="outline" data-testid="button-back-home">
+                  <Button variant="ghost" data-testid="button-back-home">
                     Back to Home
                   </Button>
                 </Link>
@@ -244,6 +282,61 @@ export default function Results() {
           )}
         </section>
       </div>
+
+      <Dialog open={showShareCard} onOpenChange={setShowShareCard}>
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden" data-testid="modal-share">
+          <div className="sr-only">
+            <DialogHeader>
+              <DialogTitle>Share your gathering</DialogTitle>
+              <DialogDescription>Share this event with a friend</DialogDescription>
+            </DialogHeader>
+          </div>
+
+          <div data-testid="share-card-preview">
+            <div className="bg-gradient-to-br from-[#4A2040] via-[#6B3A5D] to-[#C4704B] p-8 text-center">
+              <div className="mb-6">
+                <span className="font-serif text-2xl font-bold text-white/95">
+                  Third Place
+                </span>
+              </div>
+              <p className="text-white/90 text-lg leading-relaxed mb-2">
+                I'm going to
+              </p>
+              <p className="font-serif text-2xl font-bold text-white mb-4 leading-tight">
+                "{event.title}"
+              </p>
+              <p className="text-white/80 text-sm mb-6">
+                with Third Place
+              </p>
+              <div className="inline-block bg-white/15 backdrop-blur-sm rounded-md px-5 py-2.5">
+                <p className="text-white font-medium text-sm">
+                  Want to join the next one?
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 flex justify-center">
+            <Button
+              variant="outline"
+              onClick={handleCopyShare}
+              data-testid="button-copy-share"
+            >
+              {copied ? (
+                <>
+                  <Check className="mr-2 h-4 w-4" />
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <Share2 className="mr-2 h-4 w-4" />
+                  Copy Share Text
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <style>{`
         @keyframes rsvpFadeIn {

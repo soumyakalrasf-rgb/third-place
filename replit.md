@@ -11,6 +11,10 @@ Third Place is an AI-powered platform that matches compatible people into small 
 - 2026-02-14: Results reveal page at /results with event details, group cards, conversation starters, RSVP with confetti
 - 2026-02-14: POST /api/match endpoint with Zod validation for request and response
 - 2026-02-14: Custom warm color palette (ivory, terracotta, plum, sage green) with Inter + Playfair Display fonts
+- 2026-02-14: Community Dashboard at /community with 4 upcoming events, waitlist functionality
+- 2026-02-14: Share Card modal on results page (copy share text for social proof)
+- 2026-02-14: Reveal chime sound effect on results page load (plays once)
+- 2026-02-14: AI-Powered Matching badge on results page
 
 ## Project Architecture
 - Frontend: React + Vite + TailwindCSS + shadcn/ui components
@@ -19,7 +23,7 @@ Third Place is an AI-powered platform that matches compatible people into small 
 - Routing: wouter
 - State/Data: React Query mutations for API calls, controlled local state for multi-step form
 - Styling: Warm premium palette with scroll animations (vanilla IntersectionObserver)
-- Pages: Landing (/), Onboarding (/onboarding), Matching (/matching?id=X), Results (/results)
+- Pages: Landing (/), Onboarding (/onboarding), Matching (/matching?id=X), Results (/results), Community (/community)
 
 ## API Endpoints
 - POST /api/profiles - Create a new profile (returns profile with generated id)
@@ -33,6 +37,9 @@ Third Place is an AI-powered platform that matches compatible people into small 
 - client/src/pages/results.tsx - Results reveal page with event, group, starters, RSVP + confetti
 - client/src/pages/onboarding.tsx - 4-step onboarding form
 - client/src/pages/landing.tsx - Landing page
+- client/src/pages/community.tsx - Community dashboard with upcoming events
+- client/src/components/navbar.tsx - Global navbar with Community link, Try Demo, Get Started
+- client/public/chime.wav - Reveal chime sound effect
 
 ## User Preferences
 - Premium, warm, human design aesthetic

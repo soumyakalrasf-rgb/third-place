@@ -9,6 +9,7 @@ import Landing from "@/pages/landing";
 import Onboarding from "@/pages/onboarding";
 import Matching from "@/pages/matching";
 import Results from "@/pages/results";
+import Community from "@/pages/community";
 import NotFound from "@/pages/not-found";
 
 function PageTransition({ children }: { children: ReactNode }) {
@@ -47,6 +48,7 @@ function Router() {
       <Route path="/onboarding" component={Onboarding} />
       <Route path="/matching" component={Matching} />
       <Route path="/results" component={Results} />
+      <Route path="/community" component={Community} />
       <Route component={NotFound} />
     </Switch>
   );

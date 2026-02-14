@@ -39,13 +39,18 @@ export default function Navbar({ transparent = false }: { transparent?: boolean 
 
   return (
     <nav className={navClass} data-testid="nav-main">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex flex-wrap items-center justify-between gap-3">
         <Link href="/" data-testid="link-home">
           <span className="font-serif text-xl font-semibold tracking-tight text-foreground cursor-pointer">
             Third Place
           </span>
         </Link>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Link href="/community">
+            <Button variant="ghost" size="sm" data-testid="button-nav-community">
+              Community
+            </Button>
+          </Link>
           <Button
             variant="outline"
             size="sm"
