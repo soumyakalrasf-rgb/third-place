@@ -53,7 +53,7 @@ export default function Matching() {
 
   if (!profileId) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 text-center">
         <h1 className="font-serif text-3xl font-bold text-foreground mb-4" data-testid="text-matching-title">
           No Profile Found
         </h1>
@@ -67,7 +67,7 @@ export default function Matching() {
 
   if (matchMutation.isError) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 text-center">
         <h1 className="font-serif text-3xl font-bold text-foreground mb-4" data-testid="text-matching-title">
           Something Went Wrong
         </h1>
@@ -80,7 +80,7 @@ export default function Matching() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 text-center">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 text-center">
       <div className="relative mb-10">
         <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
           <Sparkles className="h-12 w-12 text-foreground/60" />

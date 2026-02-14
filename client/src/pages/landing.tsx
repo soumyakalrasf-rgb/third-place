@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, Users, Sparkles, MessageCircleHeart, ArrowRight } from "lucide-react";
+import { Heart, Users, Sparkles, MessageCircleHeart, ArrowRight, Quote } from "lucide-react";
 
 function useIntersectionObserver(options?: IntersectionObserverInit) {
   const ref = useRef<HTMLDivElement>(null);
@@ -63,25 +63,6 @@ function HeroFade({ children, className = "", delay = 0 }: { children: ReactNode
   );
 }
 
-function Navbar() {
-  return (
-    <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-background/80 border-b border-border/50" data-testid="nav-main">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4 flex-wrap">
-        <Link href="/" data-testid="link-home">
-          <span className="font-serif text-xl font-semibold tracking-tight text-foreground cursor-pointer">
-            Third Place
-          </span>
-        </Link>
-        <Link href="/onboarding">
-          <Button size="sm" data-testid="button-nav-cta">
-            Get Started
-          </Button>
-        </Link>
-      </div>
-    </nav>
-  );
-}
-
 function HeroSection() {
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center pt-16 overflow-hidden" data-testid="section-hero">
@@ -89,7 +70,7 @@ function HeroSection() {
       <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-accent/10 blur-3xl" />
 
-      <div className="relative max-w-4xl mx-auto px-6 text-center">
+      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
         <HeroFade delay={0}>
           <span className="inline-block mb-6 px-4 py-1.5 rounded-full bg-primary/10 text-foreground text-sm font-medium tracking-wide" data-testid="text-hero-badge">
             A new way to meet people
@@ -97,7 +78,7 @@ function HeroSection() {
         </HeroFade>
 
         <HeroFade delay={0.1}>
-          <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.1] text-foreground" data-testid="text-hero-headline">
+          <h1 className="font-serif text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] text-foreground" data-testid="text-hero-headline">
             Stop Swiping.
             <br />
             <span className="text-foreground/80">Start Gathering.</span>
@@ -114,7 +95,7 @@ function HeroSection() {
         <HeroFade delay={0.35}>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/onboarding">
-              <Button size="lg" className="text-base px-8" data-testid="button-hero-cta">
+              <Button size="lg" data-testid="button-hero-cta">
                 Find Your Gathering
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -156,7 +137,7 @@ function HowItWorksSection() {
 
   return (
     <section className="py-24 sm:py-32 relative" data-testid="section-how-it-works">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <FadeUp className="text-center mb-16">
           <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-accent/30 text-accent-foreground text-sm font-medium" data-testid="text-hiw-label">
             Simple & intentional
@@ -220,7 +201,7 @@ function WhySection() {
   return (
     <section className="py-24 sm:py-32 relative" data-testid="section-why">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-card/30 to-transparent" />
-      <div className="relative max-w-6xl mx-auto px-6">
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
         <FadeUp className="text-center mb-16">
           <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-primary/10 text-foreground text-sm font-medium" data-testid="text-why-label">
             Why us
@@ -253,7 +234,7 @@ function WhySection() {
 
         <FadeUp className="mt-16 text-center" delay={0.3}>
           <Link href="/onboarding">
-            <Button size="lg" className="text-base px-8" data-testid="button-why-cta">
+            <Button size="lg" data-testid="button-why-cta">
               Find Your Gathering
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -264,13 +245,66 @@ function WhySection() {
   );
 }
 
+function TestimonialsSection() {
+  const testimonials = [
+    {
+      quote: "I met my partner at a Third Place dinner. No app could have matched us this well.",
+      name: "Sarah",
+      age: 36,
+    },
+    {
+      quote: "The group setting took all the pressure off. I actually got to be myself.",
+      name: "Marcus",
+      age: 41,
+    },
+    {
+      quote: "I've made 3 close friends and am dating someone wonderful from my first gathering.",
+      name: "Rina",
+      age: 33,
+    },
+  ];
+
+  return (
+    <section className="py-24 sm:py-32 relative" data-testid="section-testimonials">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <FadeUp className="text-center mb-16">
+          <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-primary/10 text-foreground text-sm font-medium" data-testid="text-testimonials-label">
+            Real stories
+          </span>
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground" data-testid="text-testimonials-title">
+            People Love Third Place
+          </h2>
+        </FadeUp>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {testimonials.map((t, i) => (
+            <FadeUp key={t.name} delay={i * 0.15}>
+              <Card className="h-full overflow-visible" data-testid={`card-testimonial-${i}`}>
+                <CardContent className="pt-8 pb-8 px-8">
+                  <Quote className="h-6 w-6 text-primary/30 mb-4" />
+                  <p className="text-foreground leading-relaxed mb-6" data-testid={`text-testimonial-quote-${i}`}>
+                    "{t.quote}"
+                  </p>
+                  <p className="text-sm text-muted-foreground font-medium" data-testid={`text-testimonial-author-${i}`}>
+                    — {t.name}, {t.age}
+                  </p>
+                </CardContent>
+              </Card>
+            </FadeUp>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function CTASection() {
   return (
     <section className="py-24 sm:py-32" data-testid="section-cta">
-      <div className="max-w-4xl mx-auto px-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <FadeUp>
           <Card className="border-0 bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 overflow-visible">
-            <CardContent className="py-16 px-8 sm:px-16 text-center">
+            <CardContent className="py-12 sm:py-16 px-6 sm:px-16 text-center">
               <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-foreground mb-4" data-testid="text-cta-title">
                 Ready for Something Real?
               </h2>
@@ -279,7 +313,7 @@ function CTASection() {
                 person, in groups, over shared experiences.
               </p>
               <Link href="/onboarding">
-                <Button size="lg" className="text-base px-8" data-testid="button-cta-bottom">
+                <Button size="lg" data-testid="button-cta-bottom">
                   Get Started
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -295,7 +329,7 @@ function CTASection() {
 function Footer() {
   return (
     <footer className="py-12 border-t border-border/50" data-testid="section-footer">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col items-center gap-4">
           <span className="font-serif text-lg font-semibold text-foreground" data-testid="text-footer-brand">
             Third Place
@@ -318,11 +352,11 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
+    <div className="min-h-screen">
       <HeroSection />
       <HowItWorksSection />
       <WhySection />
+      <TestimonialsSection />
       <CTASection />
       <Footer />
     </div>

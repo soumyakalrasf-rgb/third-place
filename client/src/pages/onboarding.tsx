@@ -220,16 +220,12 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-start px-4 py-8 sm:py-12">
+    <div className="min-h-screen flex flex-col items-center justify-start px-4 pt-24 pb-8 sm:py-24">
       <div className="w-full max-w-lg">
-        <div className="mb-6 text-center">
-          <span className="font-serif text-xl font-semibold text-foreground" data-testid="text-brand">Third Place</span>
-        </div>
-
         <ProgressBar step={step} total={totalSteps} />
 
         <Card className="border-0 bg-card/60 overflow-visible">
-          <CardContent className="pt-8 pb-8 px-6 sm:px-8 relative">
+          <CardContent className="pt-8 pb-8 px-5 sm:px-8 relative">
             <StepWrapper visible={step === 0}>
               <Step1 form={form} updateField={updateField} />
             </StepWrapper>

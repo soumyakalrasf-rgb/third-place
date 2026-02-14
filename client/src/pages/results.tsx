@@ -86,7 +86,7 @@ export default function Results() {
 
   if (!matchResult) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
           <Sparkles className="h-8 w-8 text-foreground/60" />
         </div>
@@ -98,10 +98,10 @@ export default function Results() {
 
   return (
     <div
-      className="min-h-screen bg-background transition-all duration-700"
+      className="min-h-screen transition-all duration-700"
       style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(20px)" }}
     >
-      <div className="max-w-3xl mx-auto px-6 py-12 sm:py-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-24 pb-12 sm:py-16">
 
         <section className="mb-14" data-testid="section-event">
           <div className="text-center mb-10">
@@ -109,7 +109,7 @@ export default function Results() {
               <Calendar className="h-3.5 w-3.5" />
               <span>Your Gathering</span>
             </div>
-            <h1 className="font-serif text-4xl sm:text-5xl font-bold text-foreground mb-4 leading-tight" data-testid="text-event-title">
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 leading-tight" data-testid="text-event-title">
               {event.title}
             </h1>
             <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed" data-testid="text-event-description">
