@@ -99,6 +99,13 @@ export const insertProfileSchema = z.object({
   unexpectedThing: z.string().min(1, "Tell us something unexpected"),
   dietaryPreferences: z.array(z.string()).min(1),
   readyToShowUp: z.boolean().refine((v) => v === true, "You must be ready to show up"),
+  communityAgreement: z.boolean().optional().default(false),
+  backgroundCheck: z.boolean().optional().default(false),
+  references: z.array(z.object({
+    name: z.string(),
+    email: z.string(),
+    relationship: z.string(),
+  })).optional().default([]),
 });
 
 export type InsertProfile = z.infer<typeof insertProfileSchema>;

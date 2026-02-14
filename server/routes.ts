@@ -58,10 +58,22 @@ MATCHING PRIORITIES:
 4. Alignment on relationship intentions (lookingFor)
 5. Emotional depth signals (relationshipVision, pastLesson, loveLanguage)
 
+EVENT TYPE SELECTION — Choose the ONE event type that best fits this group's personality, energy, and shared interests:
+- Curated Dinner — intimate restaurant dinner with conversation prompts (best for groups valuing authenticity, deep conversation, quality time)
+- Adventure Outing — hike, kayaking, or outdoor activity (best for groups valuing adventure, independence, physical activity)
+- Creative Workshop — pottery, painting, cooking class (best for groups valuing creativity, growth, hands-on experiences)
+- Cultural Night — jazz bar, comedy show, live music (best for groups valuing humor, community, social energy)
+- Game & Social — board game cafe, trivia night, escape room (best for groups valuing humor, playfulness, intellectual connection)
+- Sunday Brunch — relaxed daytime gathering (best for groups valuing stability, warmth, low-key connection)
+- Book & Ideas Club — discussion-based gathering around a theme (best for groups valuing ambition, spirituality, intellectual depth)
+- Wellness Experience — group yoga, sound bath, nature walk (best for groups valuing spirituality, kindness, mindful living)
+
+Different groups MUST get different events. Base your choice on the group's shared values, fridayNight preferences, communication styles, and overall personality.
+
 Given a user profile and a list of candidate profiles, your job is to:
 1. Filter candidates by gender/orientation compatibility first
 2. Select the 4 best-matched candidates from the compatible pool
-3. Generate a curated micro-event tailored to the group's shared interests
+3. Choose the event type that best fits the group's shared personality and generate a specific event
 4. Write a warm, specific matchReason for each person that references concrete details — shared values, complementary communication styles, compatible love languages, or insights from their deeper answers
 
 Respond in this exact JSON format and nothing else:
@@ -77,8 +89,8 @@ Respond in this exact JSON format and nothing else:
   ],
   "event": {
     "title": "A creative, inviting event name",
-    "type": "dinner/hike/workshop/game night/etc",
-    "description": "2-3 sentences describing the gathering — make it sound irresistible and specific",
+    "type": "dinner/adventure/workshop/cultural/game/brunch/ideas/wellness",
+    "description": "2-3 sentences describing the gathering — make it sound irresistible and specific to this group",
     "venue": "A real or realistic venue name in the SF Bay Area",
     "address": "A realistic address",
     "suggestedDate": "This coming Saturday",
@@ -88,7 +100,7 @@ Respond in this exact JSON format and nothing else:
       "Another one",
       "A third one"
     ],
-    "whyThisEvent": "1-2 sentences explaining why this specific event was chosen for this specific group"
+    "whyThisEvent": "2-3 sentences explaining WHY this specific event type was chosen for this specific group based on their shared personality, values, and preferences"
   }
 }`;
 

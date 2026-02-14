@@ -26,6 +26,11 @@ const DEMO_PROFILE = {
   unexpectedThing: "I once taught ceramics to a group of retired engineers and they made me an honorary member of their coffee club",
   dietaryPreferences: ["No restrictions"],
   readyToShowUp: true,
+  communityAgreement: true,
+  backgroundCheck: true,
+  references: [
+    { name: "Jordan Lee", email: "jordan@example.com", relationship: "Friend" },
+  ],
 };
 
 export default function Navbar({ transparent = false }: { transparent?: boolean }) {

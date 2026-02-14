@@ -1,0 +1,45 @@
+Make these additions to the Third Place app:
+
+1. SAFETY & TRUST — Add a new onboarding step as the LAST step before submission called "Safety & Trust" with a warm header: "We take your safety seriously" and include:
+
+   - A "Community Agreement" that users must check a box to agree to, with this text displayed:
+     "By joining Third Place, I agree to:
+     • Treat all members with respect and dignity
+     • Honor others' boundaries and consent
+     • Not engage in harassment, discrimination, or intimidation
+     • Report any behavior that makes me or others feel unsafe
+     Third Place has zero tolerance for harassment, abuse, or criminal behavior. Violations result in immediate removal and may be reported to law enforcement."
+
+   - A "Verification" section that shows:
+     - A checkbox: "I consent to a background verification check" with a note underneath: "We partner with trusted third-party providers to ensure community safety. A basic background check is required before attending your first gathering."
+     - Show a badge/icon that says "Verified ✓" as a preview of what their profile will show once cleared
+
+   - A "References" section:
+     - "Add 1-2 people who can vouch for you (friends, colleagues, or community members)"
+     - Two sets of fields: Name + Email + Relationship (e.g. "Friend", "Colleague", "Former partner — amicable")
+     - A note: "We may reach out to your references before your first gathering. This keeps our community trusted and accountable."
+
+   - A small note at the bottom: "Third Place gatherings are held in public venues. We recommend sharing your gathering details with a trusted friend. Your safety is our priority."
+
+2. MULTIPLE EVENT TYPES — Update the AI matching system prompt to generate DIFFERENT types of events based on the group's personality. The AI should choose from these event categories and pick the one that best fits the group:
+
+   - 🍽️ Curated Dinner — intimate restaurant dinner with conversation prompts
+   - 🥾 Adventure Outing — hike, kayaking, or outdoor activity
+   - 🎨 Creative Workshop — pottery, painting, cooking class
+   - 🎵 Cultural Night — jazz bar, comedy show, live music
+   - 🎲 Game & Social — board game cafe, trivia night, escape room
+   - ☕ Sunday Brunch — relaxed daytime gathering
+   - 📚 Book & Ideas Club — discussion-based gathering around a theme
+   - 🧘 Wellness Experience — group yoga, sound bath, nature walk
+
+   Update the system prompt so it explains WHY it chose that specific event type for the group based on their shared preferences. Different groups should get genuinely different events.
+
+3. TRUST BADGES ON RESULTS — On the results page, show small badges next to each group member's name:
+   - "Background Verified ✓" (green badge)
+   - "References Checked ✓" (blue badge)
+   These are fake for the demo but show the judges the trust infrastructure.
+
+4. SAFETY FEATURES ON RESULTS PAGE — Add a small "Safety" section at the bottom of the results page with:
+   - "Share your gathering details with a friend" button (just copies the event info to clipboard)
+   - "Report a concern" link
+   - A note: "All gatherings are in public venues. A Third Place community host will be present at every event."

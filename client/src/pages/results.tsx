@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Sparkles, MapPin, Clock, MessageCircle, Users, Calendar, Check, Share2, Cpu } from "lucide-react";
+import { Sparkles, MapPin, Clock, MessageCircle, Users, Calendar, Check, Share2, Cpu, ShieldCheck, UserCheck, Copy, Flag } from "lucide-react";
 import confetti from "canvas-confetti";
 
 interface MatchMember {
@@ -39,6 +39,7 @@ export default function Results() {
   const [visible, setVisible] = useState(false);
   const [showShareCard, setShowShareCard] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [safetyCopied, setSafetyCopied] = useState(false);
   const confettiFired = useRef(false);
   const chimePlayed = useRef(false);
 
@@ -109,6 +110,18 @@ export default function Results() {
       setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);
+    }
+  };
+
+  const handleShareSafety = async () => {
+    if (!matchResult) return;
+    const text = `Hey! I'm going to a Third Place gathering this weekend. Here are the details:\n\nEvent: ${matchResult.event.title}\nVenue: ${matchResult.event.venue}\nAddress: ${matchResult.event.address}\nDate: ${matchResult.event.suggestedDate}\nTime: ${matchResult.event.suggestedTime}\n\nJust sharing so you know where I'll be!`;
+    try {
+      await navigator.clipboard.writeText(text);
+      setSafetyCopied(true);
+      setTimeout(() => setSafetyCopied(false), 2000);
+    } catch {
+      setSafetyCopied(false);
     }
   };
 
@@ -196,9 +209,21 @@ export default function Results() {
                         <span className="font-semibold text-foreground" data-testid={`text-match-name-${idx}`}>{member.name}</span>
                         <span className="text-sm text-muted-foreground">{member.age}</span>
                       </div>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground mb-2">
-                        <MapPin className="h-3 w-3 shrink-0" />
-                        <span>{member.neighborhood}</span>
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <MapPin className="h-3 w-3 shrink-0" />
+                          <span>{member.neighborhood}</span>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 mb-2">
+                        <Badge variant="outline" className="text-[10px] gap-1 bg-emerald-500/10 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 dark:border-emerald-500/30 no-default-hover-elevate no-default-active-elevate" data-testid={`badge-verified-${idx}`}>
+                          <ShieldCheck className="h-2.5 w-2.5" />
+                          Background Verified
+                        </Badge>
+                        <Badge variant="outline" className="text-[10px] gap-1 bg-blue-500/10 dark:bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/20 dark:border-blue-500/30 no-default-hover-elevate no-default-active-elevate" data-testid={`badge-references-${idx}`}>
+                          <UserCheck className="h-2.5 w-2.5" />
+                          References Checked
+                        </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground leading-relaxed" data-testid={`text-match-reason-${idx}`}>
                         {member.matchReason}
@@ -228,6 +253,41 @@ export default function Results() {
                   </li>
                 ))}
               </ul>
+            </CardContent>
+          </Card>
+        </section>
+
+        <section className="mb-14" data-testid="section-safety">
+          <Card className="overflow-visible border-border/50">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <ShieldCheck className="h-5 w-5 text-foreground/60" />
+                <h3 className="font-serif text-lg font-bold text-foreground" data-testid="text-safety-heading">Safety</h3>
+              </div>
+              <div className="space-y-4">
+                <div className="flex flex-wrap gap-3">
+                  <Button variant="outline" size="sm" onClick={handleShareSafety} data-testid="button-share-safety">
+                    {safetyCopied ? (
+                      <>
+                        <Check className="mr-2 h-3.5 w-3.5" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="mr-2 h-3.5 w-3.5" />
+                        Share gathering details with a friend
+                      </>
+                    )}
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => window.open("mailto:safety@thirdplace.app?subject=Safety Concern", "_blank")} data-testid="button-report-concern">
+                    <Flag className="mr-2 h-3.5 w-3.5" />
+                    Report a concern
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed" data-testid="text-safety-host-note">
+                  All gatherings are in public venues. A Third Place community host will be present at every event.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </section>

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Sparkles, Shield, ShieldCheck } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +24,12 @@ import {
   NON_NEGOTIABLES_OPTIONS,
   DIETARY_OPTIONS,
 } from "@shared/schema";
+
+interface ReferenceData {
+  name: string;
+  email: string;
+  relationship: string;
+}
 
 interface FormData {
   firstName: string;
@@ -46,6 +52,9 @@ interface FormData {
   unexpectedThing: string;
   dietaryPreferences: string[];
   readyToShowUp: boolean;
+  communityAgreement: boolean;
+  backgroundCheck: boolean;
+  references: ReferenceData[];
 }
 
 const INITIAL_FORM: FormData = {
@@ -69,6 +78,12 @@ const INITIAL_FORM: FormData = {
   unexpectedThing: "",
   dietaryPreferences: [],
   readyToShowUp: false,
+  communityAgreement: false,
+  backgroundCheck: false,
+  references: [
+    { name: "", email: "", relationship: "" },
+    { name: "", email: "", relationship: "" },
+  ],
 };
 
 type ArrayKeys = "values" | "nonNegotiables" | "dietaryPreferences" | "interestedIn";
@@ -178,7 +193,7 @@ export default function Onboarding() {
   const [form, setForm] = useState<FormData>(INITIAL_FORM);
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const totalSteps = 5;
+  const totalSteps = 6;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -220,6 +235,8 @@ export default function Onboarding() {
         return form.lookingFor.length > 0 && form.communicationStyle.length > 0 && form.nonNegotiables.length >= 1 && form.nonNegotiables.length <= 2;
       case 4:
         return form.unexpectedThing.trim().length > 0 && form.dietaryPreferences.length >= 1 && form.readyToShowUp;
+      case 5:
+        return form.communityAgreement && form.backgroundCheck && form.references[0].name.trim().length > 0 && form.references[0].email.trim().length > 0 && form.references[0].relationship.trim().length > 0;
       default:
         return false;
     }
@@ -276,6 +293,15 @@ export default function Onboarding() {
             </StepWrapper>
             <StepWrapper visible={step === 4}>
               <Step4 form={form} toggleArrayItem={toggleArrayItem} updateField={updateField} />
+            </StepWrapper>
+            <StepWrapper visible={step === 5}>
+              <StepSafety form={form} updateField={updateField} updateReference={(idx, field, value) => {
+                setForm(prev => {
+                  const refs = [...prev.references];
+                  refs[idx] = { ...refs[idx], [field]: value };
+                  return { ...prev, references: refs };
+                });
+              }} />
             </StepWrapper>
 
             <div className="flex flex-wrap items-center justify-between gap-4 mt-8">
@@ -697,6 +723,124 @@ function Step4({
             I'm ready to show up as my authentic self
           </Label>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function StepSafety({
+  form,
+  updateField,
+  updateReference,
+}: {
+  form: FormData;
+  updateField: <K extends keyof FormData>(key: K, value: FormData[K]) => void;
+  updateReference: (idx: number, field: keyof ReferenceData, value: string) => void;
+}) {
+  return (
+    <div>
+      <div className="flex items-center gap-3 mb-2">
+        <Shield className="h-6 w-6 text-foreground/70" />
+        <h2 className="font-serif text-2xl font-bold text-foreground" data-testid="text-step-title">
+          Safety & Trust
+        </h2>
+      </div>
+      <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
+        We take your safety seriously. These steps help us build a trusted community.
+      </p>
+
+      <div className="space-y-6">
+        <div>
+          <Label className="text-sm font-semibold text-foreground">Community Agreement</Label>
+          <div className="mt-2 p-4 rounded-md bg-card/80 border border-border text-sm text-foreground/90 leading-relaxed space-y-2" data-testid="text-community-agreement">
+            <p>By joining Third Place, I agree to:</p>
+            <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+              <li>Treat all members with respect and dignity</li>
+              <li>Honor others' boundaries and consent</li>
+              <li>Not engage in harassment, discrimination, or intimidation</li>
+              <li>Report any behavior that makes me or others feel unsafe</li>
+            </ul>
+            <p className="text-muted-foreground text-xs pt-1">
+              Third Place has zero tolerance for harassment, abuse, or criminal behavior. Violations result in immediate removal and may be reported to law enforcement.
+            </p>
+          </div>
+          <div className="flex items-start gap-3 mt-3">
+            <Checkbox
+              id="communityAgreement"
+              checked={form.communityAgreement}
+              onCheckedChange={(checked) => updateField("communityAgreement", checked === true)}
+              data-testid="checkbox-community-agreement"
+            />
+            <Label htmlFor="communityAgreement" className="text-sm leading-relaxed cursor-pointer">
+              I agree to the Community Agreement
+            </Label>
+          </div>
+        </div>
+
+        <div>
+          <Label className="text-sm font-semibold text-foreground">Verification</Label>
+          <div className="flex items-start gap-3 mt-3">
+            <Checkbox
+              id="backgroundCheck"
+              checked={form.backgroundCheck}
+              onCheckedChange={(checked) => updateField("backgroundCheck", checked === true)}
+              data-testid="checkbox-background-check"
+            />
+            <div>
+              <Label htmlFor="backgroundCheck" className="text-sm leading-relaxed cursor-pointer">
+                I consent to a background verification check
+              </Label>
+              <p className="text-xs text-muted-foreground mt-1">
+                We partner with trusted third-party providers to ensure community safety. A basic background check is required before attending your first gathering.
+              </p>
+            </div>
+          </div>
+          {form.backgroundCheck && (
+            <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20" data-testid="badge-verified-preview">
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+              <span className="text-xs font-medium text-emerald-700">Verified</span>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <Label className="text-sm font-semibold text-foreground">References</Label>
+          <p className="text-xs text-muted-foreground mt-1 mb-3">
+            Add 1-2 people who can vouch for you (friends, colleagues, or community members)
+          </p>
+
+          {form.references.map((ref, idx) => (
+            <div key={idx} className="space-y-2 mb-4">
+              <p className="text-xs font-medium text-muted-foreground">Reference {idx + 1}{idx === 1 ? " (optional)" : ""}</p>
+              <Input
+                placeholder="Name"
+                value={ref.name}
+                onChange={(e) => updateReference(idx, "name", e.target.value)}
+                data-testid={`input-ref-name-${idx}`}
+              />
+              <Input
+                placeholder="Email"
+                type="email"
+                value={ref.email}
+                onChange={(e) => updateReference(idx, "email", e.target.value)}
+                data-testid={`input-ref-email-${idx}`}
+              />
+              <Input
+                placeholder='Relationship (e.g. "Friend", "Colleague")'
+                value={ref.relationship}
+                onChange={(e) => updateReference(idx, "relationship", e.target.value)}
+                data-testid={`input-ref-relationship-${idx}`}
+              />
+            </div>
+          ))}
+          <p className="text-xs text-muted-foreground">
+            We may reach out to your references before your first gathering. This keeps our community trusted and accountable.
+          </p>
+        </div>
+
+        <p className="text-xs text-muted-foreground/80 italic pt-2 border-t border-border" data-testid="text-safety-note">
+          Third Place gatherings are held in public venues. We recommend sharing your gathering details with a trusted friend. Your safety is our priority.
+        </p>
       </div>
     </div>
   );

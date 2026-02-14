@@ -19,6 +19,10 @@ Third Place is an AI-powered platform that matches compatible people into small 
 - 2026-02-14: New "A Bit Deeper" step with relationship vision, past lesson, love language, conflict style
 - 2026-02-14: Gender/sexuality-aware AI matching — respects orientation compatibility
 - 2026-02-14: Seed profiles updated with diverse gender identities and sexual orientations
+- 2026-02-14: Safety & Trust onboarding step 6 with community agreement, background verification, references
+- 2026-02-14: 8 diverse AI event types (dinner, adventure, workshop, cultural, game, brunch, ideas, wellness)
+- 2026-02-14: Trust badges (Background Verified, References Checked) on results match cards
+- 2026-02-14: Safety section on results page with share details, report concern, host note
 
 ## Project Architecture
 - Frontend: React + Vite + TailwindCSS + shadcn/ui components
@@ -38,8 +42,8 @@ Third Place is an AI-powered platform that matches compatible people into small 
 - server/seedProfiles.ts - 12 diverse SF Bay Area seed profiles
 - server/routes.ts - All API routes including AI matching
 - client/src/pages/matching.tsx - Animated loading screen with rotating phrases
-- client/src/pages/results.tsx - Results reveal page with event, group, starters, RSVP + confetti
-- client/src/pages/onboarding.tsx - 5-step onboarding form with identity + deeper questions
+- client/src/pages/results.tsx - Results reveal page with event, group, trust badges, starters, safety section, RSVP + confetti
+- client/src/pages/onboarding.tsx - 6-step onboarding form with identity, deeper questions, safety & trust
 - client/src/pages/landing.tsx - Landing page
 - client/src/pages/community.tsx - Community dashboard with upcoming events
 - client/src/components/navbar.tsx - Global navbar with Community link, Try Demo, Get Started
