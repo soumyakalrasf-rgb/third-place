@@ -1,73 +1,55 @@
-import { useEffect } from "react";
-import { Link, useSearch } from "wouter";
+import { useEffect, useState, useRef } from "react";
+import { Link, useSearch, useLocation } from "wouter";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Sparkles, ArrowLeft, MapPin, Calendar, Clock, MessageCircle, Users } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 
-interface MatchMember {
-  id: string;
-  name: string;
-  age: number;
-  neighborhood: string;
-  matchReason: string;
-}
-
-interface MatchEvent {
-  title: string;
-  type: string;
-  description: string;
-  venue: string;
-  address: string;
-  suggestedDate: string;
-  suggestedTime: string;
-  conversationStarters: string[];
-  whyThisEvent: string;
-}
+const ROTATING_PHRASES = [
+  "Analyzing compatibility...",
+  "Curating your group...",
+  "Planning something special...",
+  "Almost ready...",
+];
 
 interface MatchResult {
-  group: MatchMember[];
-  event: MatchEvent;
-}
-
-function LoadingState() {
-  return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 text-center">
-      <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-8 animate-pulse">
-        <Sparkles className="h-10 w-10 text-foreground/70" />
-      </div>
-      <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-3" data-testid="text-matching-title">
-        Finding Your People...
-      </h1>
-      <p className="text-muted-foreground text-lg max-w-md mx-auto leading-relaxed mb-2" data-testid="text-matching-subtitle">
-        Our AI is matching you with compatible people in your area and planning the perfect gathering.
-      </p>
-      <p className="text-sm text-muted-foreground/70 mb-10">
-        This usually takes a moment.
-      </p>
-    </div>
-  );
+  group: any[];
+  event: any;
 }
 
 export default function Matching() {
   const searchString = useSearch();
   const params = new URLSearchParams(searchString);
   const profileId = params.get("id");
+  const [, navigate] = useLocation();
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const hasStarted = useRef(false);
 
   const matchMutation = useMutation<MatchResult, Error, string>({
     mutationFn: async (id: string) => {
       const res = await apiRequest("POST", "/api/match", { profileId: id });
       return res.json();
     },
+    onSuccess: (data) => {
+      sessionStorage.setItem("matchResult", JSON.stringify(data));
+      navigate("/results");
+    },
   });
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (profileId && !matchMutation.data && !matchMutation.isPending) {
+    if (profileId && !hasStarted.current) {
+      hasStarted.current = true;
       matchMutation.mutate(profileId);
     }
   }, [profileId]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPhraseIndex((prev) => (prev + 1) % ROTATING_PHRASES.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   if (!profileId) {
     return (
@@ -83,11 +65,7 @@ export default function Matching() {
     );
   }
 
-  if (matchMutation.isPending || (!matchMutation.data && !matchMutation.isError)) {
-    return <LoadingState />;
-  }
-
-  if (matchMutation.isError || !matchMutation.data) {
+  if (matchMutation.isError) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 text-center">
         <h1 className="font-serif text-3xl font-bold text-foreground mb-4" data-testid="text-matching-title">
@@ -101,118 +79,58 @@ export default function Matching() {
     );
   }
 
-  const { group, event } = matchMutation.data;
-
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-3xl mx-auto px-6 py-12">
-        <div className="text-center mb-12">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-            <Sparkles className="h-8 w-8 text-foreground/70" />
-          </div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-3" data-testid="text-matching-title">
-            Your Group is Ready
-          </h1>
-          <p className="text-muted-foreground text-lg max-w-md mx-auto" data-testid="text-matching-subtitle">
-            We found {group.length} people who complement you beautifully.
-          </p>
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 text-center">
+      <div className="relative mb-10">
+        <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
+          <Sparkles className="h-12 w-12 text-foreground/60" />
         </div>
-
-        <section className="mb-12">
-          <div className="flex items-center gap-2 mb-6">
-            <Users className="h-5 w-5 text-foreground/70" />
-            <h2 className="font-serif text-2xl font-bold text-foreground" data-testid="text-group-heading">Your Group</h2>
-          </div>
-          <div className="space-y-4">
-            {group.map((member, idx) => (
-              <Card key={member.id} className="overflow-visible" data-testid={`card-match-${idx}`}>
-                <CardContent className="p-5">
-                  <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0 text-sm font-semibold text-foreground">
-                      {member.name.charAt(0)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <span className="font-semibold text-foreground" data-testid={`text-match-name-${idx}`}>{member.name}</span>
-                        <span className="text-sm text-muted-foreground">{member.age}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground mb-2">
-                        <MapPin className="h-3 w-3" />
-                        <span>{member.neighborhood}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed" data-testid={`text-match-reason-${idx}`}>
-                        {member.matchReason}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        <section className="mb-12">
-          <div className="flex items-center gap-2 mb-6">
-            <Calendar className="h-5 w-5 text-foreground/70" />
-            <h2 className="font-serif text-2xl font-bold text-foreground" data-testid="text-event-heading">Your Gathering</h2>
-          </div>
-          <Card className="overflow-visible" data-testid="card-event">
-            <CardContent className="p-6">
-              <h3 className="font-serif text-xl font-bold text-foreground mb-1" data-testid="text-event-title">{event.title}</h3>
-              <span className="inline-block text-xs uppercase tracking-wider text-muted-foreground mb-4">{event.type}</span>
-              <p className="text-muted-foreground leading-relaxed mb-6" data-testid="text-event-description">{event.description}</p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                <div className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 text-foreground/70 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground" data-testid="text-event-venue">{event.venue}</p>
-                    <p className="text-sm text-muted-foreground">{event.address}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <Clock className="h-4 w-4 text-foreground/70 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground" data-testid="text-event-date">{event.suggestedDate}</p>
-                    <p className="text-sm text-muted-foreground" data-testid="text-event-time">{event.suggestedTime}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <MessageCircle className="h-4 w-4 text-foreground/70" />
-                  <span className="text-sm font-medium text-foreground">Conversation Starters</span>
-                </div>
-                <ul className="space-y-2">
-                  {event.conversationStarters.map((starter, i) => (
-                    <li key={i} className="text-sm text-muted-foreground pl-4 border-l-2 border-primary/20" data-testid={`text-starter-${i}`}>
-                      {starter}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <p className="text-sm text-muted-foreground/80 italic" data-testid="text-event-why">{event.whyThisEvent}</p>
-            </CardContent>
-          </Card>
-        </section>
-
-        <div className="text-center space-y-4">
-          <Button size="lg" data-testid="button-rsvp">
-            <Sparkles className="mr-2 h-4 w-4" />
-            Count Me In
-          </Button>
-          <div>
-            <Link href="/">
-              <Button variant="ghost" data-testid="button-back-home">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Home
-              </Button>
-            </Link>
-          </div>
-        </div>
+        <div className="absolute inset-0 rounded-full border-2 border-primary/20 animate-ping" style={{ animationDuration: "2s" }} />
       </div>
+
+      <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-4" data-testid="text-matching-title">
+        Finding Your People
+      </h1>
+
+      <div className="h-8 flex items-center justify-center mb-6" data-testid="text-rotating-phrase">
+        <p
+          key={phraseIndex}
+          className="text-lg text-muted-foreground"
+          style={{
+            animation: "phraseIn 0.5s ease-out",
+          }}
+        >
+          {ROTATING_PHRASES[phraseIndex]}
+        </p>
+      </div>
+
+      <div className="flex gap-2 mb-8" data-testid="loading-dots">
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            className="w-2.5 h-2.5 rounded-full bg-primary/40"
+            style={{
+              animation: "dotPulse 1.4s ease-in-out infinite",
+              animationDelay: `${i * 0.2}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      <p className="text-sm text-muted-foreground/60">
+        This usually takes a few seconds.
+      </p>
+
+      <style>{`
+        @keyframes phraseIn {
+          0% { opacity: 0; transform: translateY(8px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes dotPulse {
+          0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+          40% { opacity: 1; transform: scale(1.2); }
+        }
+      `}</style>
     </div>
   );
 }

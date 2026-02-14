@@ -7,7 +7,8 @@ Third Place is an AI-powered platform that matches compatible people into small 
 - 2026-02-14: Initial landing page built with hero, how it works, why section, CTA, footer
 - 2026-02-14: Multi-step onboarding flow (4 steps) with profile submission to backend
 - 2026-02-14: AI matching backend with Claude API (claude-sonnet-4-20250514) and 12 seed profiles
-- 2026-02-14: Matching results page showing group members and curated event details
+- 2026-02-14: Animated loading screen at /matching with rotating phrases, navigates to /results
+- 2026-02-14: Results reveal page at /results with event details, group cards, conversation starters, RSVP with confetti
 - 2026-02-14: POST /api/match endpoint with Zod validation for request and response
 - 2026-02-14: Custom warm color palette (ivory, terracotta, plum, sage green) with Inter + Playfair Display fonts
 
@@ -18,7 +19,7 @@ Third Place is an AI-powered platform that matches compatible people into small 
 - Routing: wouter
 - State/Data: React Query mutations for API calls, controlled local state for multi-step form
 - Styling: Warm premium palette with scroll animations (vanilla IntersectionObserver)
-- Pages: Landing (/), Onboarding (/onboarding), Matching (/matching?id=X)
+- Pages: Landing (/), Onboarding (/onboarding), Matching (/matching?id=X), Results (/results)
 
 ## API Endpoints
 - POST /api/profiles - Create a new profile (returns profile with generated id)
@@ -28,7 +29,8 @@ Third Place is an AI-powered platform that matches compatible people into small 
 ## Key Files
 - server/seedProfiles.ts - 12 diverse SF Bay Area seed profiles
 - server/routes.ts - All API routes including AI matching
-- client/src/pages/matching.tsx - Match results display page
+- client/src/pages/matching.tsx - Animated loading screen with rotating phrases
+- client/src/pages/results.tsx - Results reveal page with event, group, starters, RSVP + confetti
 - client/src/pages/onboarding.tsx - 4-step onboarding form
 - client/src/pages/landing.tsx - Landing page
 
