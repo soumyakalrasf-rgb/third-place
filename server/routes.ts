@@ -40,10 +40,29 @@ const anthropic = new Anthropic();
 
 const MATCH_SYSTEM_PROMPT = `You are the matching engine for Third Place, a community gathering platform for serious daters aged 30+. 
 
+CRITICAL MATCHING RULES — GENDER & SEXUALITY AWARENESS:
+- Each profile includes "genderIdentity", "pronouns", and "interestedIn" fields.
+- You MUST respect sexual orientation and gender preferences. Only match people who are compatible based on their "interestedIn" preferences.
+- "interestedIn" indicates which genders a person is attracted to. For example:
+  - A woman interested in ["Women"] should only be matched with women or nonbinary folks who are also interested in women.
+  - A man interested in ["Men"] should only be matched with men or nonbinary folks who are also interested in men.
+  - Someone interested in ["All genders"] is open to anyone.
+- NEVER assume heteronormative pairings. A woman is not automatically interested in men.
+- When forming a group of 4 matches, ensure ALL members could plausibly be romantically compatible with the user based on mutual gender/orientation alignment.
+- Use each person's pronouns correctly in your response.
+
+MATCHING PRIORITIES:
+1. Gender/orientation compatibility (MANDATORY — disqualify incompatible matches)
+2. Shared or complementary values
+3. Compatible communication and conflict styles
+4. Alignment on relationship intentions (lookingFor)
+5. Emotional depth signals (relationshipVision, pastLesson, loveLanguage)
+
 Given a user profile and a list of candidate profiles, your job is to:
-1. Select the 4 best-matched candidates for this user to form a group of 5
-2. Generate a curated micro-event tailored to the group's shared interests
-3. Explain why each person was matched
+1. Filter candidates by gender/orientation compatibility first
+2. Select the 4 best-matched candidates from the compatible pool
+3. Generate a curated micro-event tailored to the group's shared interests
+4. Write a warm, specific matchReason for each person that references concrete details — shared values, complementary communication styles, compatible love languages, or insights from their deeper answers
 
 Respond in this exact JSON format and nothing else:
 {
@@ -53,7 +72,7 @@ Respond in this exact JSON format and nothing else:
       "name": "first name",
       "age": 00,
       "neighborhood": "area",
-      "matchReason": "A warm, specific 1-2 sentence reason why this person complements the user"
+      "matchReason": "A warm, specific 1-2 sentence reason referencing shared values, complementary styles, or emotional depth"
     }
   ],
   "event": {
@@ -74,7 +93,31 @@ Respond in this exact JSON format and nothing else:
 }`;
 
 function getFallbackMatch(userProfile: any) {
-  const picked = seedProfiles.slice(0, 4);
+  const userInterests = userProfile.interestedIn || ["All genders"];
+  const userGender = userProfile.genderIdentity || "Prefer not to say";
+
+  const genderMap: Record<string, string[]> = {
+    "Woman": ["Women"],
+    "Man": ["Men"],
+    "Nonbinary": ["Nonbinary folks", "All genders"],
+    "Genderqueer": ["Nonbinary folks", "All genders"],
+  };
+
+  const userGenderLabels = genderMap[userGender] || ["All genders"];
+
+  const compatible = seedProfiles.filter((p) => {
+    const candidateGenderLabels = genderMap[p.genderIdentity] || ["All genders"];
+    const userInterestedInCandidate =
+      userInterests.includes("All genders") ||
+      candidateGenderLabels.some((g: string) => userInterests.includes(g));
+    const candidateInterestedInUser =
+      p.interestedIn.includes("All genders") ||
+      userGenderLabels.some((g: string) => p.interestedIn.includes(g));
+    return userInterestedInCandidate && candidateInterestedInUser;
+  });
+
+  const picked = (compatible.length >= 4 ? compatible : seedProfiles).slice(0, 4);
+
   return {
     group: picked.map((p) => ({
       id: p.id,

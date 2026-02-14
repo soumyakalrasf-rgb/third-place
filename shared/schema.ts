@@ -17,6 +17,18 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
+export const GENDER_IDENTITY_OPTIONS = [
+  "Woman", "Man", "Nonbinary", "Genderqueer", "Prefer to self-describe", "Prefer not to say",
+] as const;
+
+export const PRONOUNS_OPTIONS = [
+  "She/her", "He/him", "They/them", "Other",
+] as const;
+
+export const INTERESTED_IN_OPTIONS = [
+  "Women", "Men", "Nonbinary folks", "All genders",
+] as const;
+
 export const VALUES_OPTIONS = [
   "Authenticity", "Growth", "Family", "Adventure", "Stability", "Humor",
   "Ambition", "Spirituality", "Creativity", "Kindness", "Independence", "Community",
@@ -29,6 +41,17 @@ export const FRIDAY_NIGHT_OPTIONS = [
   "Outdoor adventure",
   "Game night with friends",
   "Cozy night with a book",
+] as const;
+
+export const LOVE_LANGUAGE_OPTIONS = [
+  "Words of Affirmation", "Quality Time", "Acts of Service", "Physical Touch", "Receiving Gifts",
+] as const;
+
+export const CONFLICT_STYLE_OPTIONS = [
+  "Talk it through immediately",
+  "Need space first then talk",
+  "Write my feelings down",
+  "Use humor to defuse",
 ] as const;
 
 export const LOOKING_FOR_OPTIONS = [
@@ -59,8 +82,17 @@ export const insertProfileSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   age: z.number().min(25, "Must be at least 25").max(120),
   neighborhood: z.string().min(1, "Neighborhood is required"),
+  genderIdentity: z.string().min(1),
+  genderSelfDescribe: z.string().optional().default(""),
+  pronouns: z.string().min(1),
+  pronounsOther: z.string().optional().default(""),
+  interestedIn: z.array(z.string()).min(1),
   values: z.array(z.string()).min(1).max(3),
   fridayNight: z.string().min(1),
+  relationshipVision: z.string().optional().default(""),
+  pastLesson: z.string().optional().default(""),
+  loveLanguage: z.string().optional().default(""),
+  conflictStyle: z.string().optional().default(""),
   lookingFor: z.string().min(1),
   communicationStyle: z.string().min(1),
   nonNegotiables: z.array(z.string()).min(1).max(2),

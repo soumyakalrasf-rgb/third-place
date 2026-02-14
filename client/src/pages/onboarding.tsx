@@ -12,8 +12,13 @@ import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import type { Profile } from "@shared/schema";
 import {
+  GENDER_IDENTITY_OPTIONS,
+  PRONOUNS_OPTIONS,
+  INTERESTED_IN_OPTIONS,
   VALUES_OPTIONS,
   FRIDAY_NIGHT_OPTIONS,
+  LOVE_LANGUAGE_OPTIONS,
+  CONFLICT_STYLE_OPTIONS,
   LOOKING_FOR_OPTIONS,
   COMMUNICATION_STYLE_OPTIONS,
   NON_NEGOTIABLES_OPTIONS,
@@ -24,8 +29,17 @@ interface FormData {
   firstName: string;
   age: string;
   neighborhood: string;
+  genderIdentity: string;
+  genderSelfDescribe: string;
+  pronouns: string;
+  pronounsOther: string;
+  interestedIn: string[];
   values: string[];
   fridayNight: string;
+  relationshipVision: string;
+  pastLesson: string;
+  loveLanguage: string;
+  conflictStyle: string;
   lookingFor: string;
   communicationStyle: string;
   nonNegotiables: string[];
@@ -38,8 +52,17 @@ const INITIAL_FORM: FormData = {
   firstName: "",
   age: "",
   neighborhood: "",
+  genderIdentity: "",
+  genderSelfDescribe: "",
+  pronouns: "",
+  pronounsOther: "",
+  interestedIn: [],
   values: [],
   fridayNight: "",
+  relationshipVision: "",
+  pastLesson: "",
+  loveLanguage: "",
+  conflictStyle: "",
   lookingFor: "",
   communicationStyle: "",
   nonNegotiables: [],
@@ -47,6 +70,8 @@ const INITIAL_FORM: FormData = {
   dietaryPreferences: [],
   readyToShowUp: false,
 };
+
+type ArrayKeys = "values" | "nonNegotiables" | "dietaryPreferences" | "interestedIn";
 
 function StepWrapper({ children, visible }: { children: ReactNode; visible: boolean }) {
   return (
@@ -131,7 +156,7 @@ function ProgressBar({ step, total }: { step: number; total: number }) {
   const pct = ((step + 1) / total) * 100;
   return (
     <div className="w-full mb-8">
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex flex-wrap justify-between items-center mb-2 gap-2">
         <span className="text-xs text-muted-foreground font-medium" data-testid="text-step-indicator">
           Step {step + 1} of {total}
         </span>
@@ -153,7 +178,7 @@ export default function Onboarding() {
   const [form, setForm] = useState<FormData>(INITIAL_FORM);
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const totalSteps = 4;
+  const totalSteps = 5;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -163,7 +188,7 @@ export default function Onboarding() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const toggleArrayItem = (key: "values" | "nonNegotiables" | "dietaryPreferences", item: string, max?: number) => {
+  const toggleArrayItem = (key: ArrayKeys, item: string, max?: number) => {
     setForm((prev) => {
       const arr = prev[key];
       if (arr.includes(item)) {
@@ -177,12 +202,23 @@ export default function Onboarding() {
   const canContinue = (): boolean => {
     switch (step) {
       case 0:
-        return form.firstName.trim().length > 0 && Number(form.age) >= 25 && form.neighborhood.trim().length > 0;
+        return (
+          form.firstName.trim().length > 0 &&
+          Number(form.age) >= 25 &&
+          form.neighborhood.trim().length > 0 &&
+          form.genderIdentity.length > 0 &&
+          (form.genderIdentity !== "Prefer to self-describe" || form.genderSelfDescribe.trim().length > 0) &&
+          form.pronouns.length > 0 &&
+          (form.pronouns !== "Other" || form.pronounsOther.trim().length > 0) &&
+          form.interestedIn.length > 0
+        );
       case 1:
         return form.values.length >= 1 && form.values.length <= 3 && form.fridayNight.length > 0;
       case 2:
-        return form.lookingFor.length > 0 && form.communicationStyle.length > 0 && form.nonNegotiables.length >= 1 && form.nonNegotiables.length <= 2;
+        return form.loveLanguage.length > 0 && form.conflictStyle.length > 0;
       case 3:
+        return form.lookingFor.length > 0 && form.communicationStyle.length > 0 && form.nonNegotiables.length >= 1 && form.nonNegotiables.length <= 2;
+      case 4:
         return form.unexpectedThing.trim().length > 0 && form.dietaryPreferences.length >= 1 && form.readyToShowUp;
       default:
         return false;
@@ -227,19 +263,22 @@ export default function Onboarding() {
         <Card className="border-0 bg-card/60 overflow-visible">
           <CardContent className="pt-8 pb-8 px-5 sm:px-8 relative">
             <StepWrapper visible={step === 0}>
-              <Step1 form={form} updateField={updateField} />
+              <Step1 form={form} updateField={updateField} toggleArrayItem={toggleArrayItem} />
             </StepWrapper>
             <StepWrapper visible={step === 1}>
               <Step2 form={form} toggleArrayItem={toggleArrayItem} updateField={updateField} />
             </StepWrapper>
             <StepWrapper visible={step === 2}>
-              <Step3 form={form} toggleArrayItem={toggleArrayItem} updateField={updateField} />
+              <StepDeeper form={form} updateField={updateField} />
             </StepWrapper>
             <StepWrapper visible={step === 3}>
+              <Step3 form={form} toggleArrayItem={toggleArrayItem} updateField={updateField} />
+            </StepWrapper>
+            <StepWrapper visible={step === 4}>
               <Step4 form={form} toggleArrayItem={toggleArrayItem} updateField={updateField} />
             </StepWrapper>
 
-            <div className="flex items-center justify-between gap-4 mt-8 flex-wrap">
+            <div className="flex flex-wrap items-center justify-between gap-4 mt-8">
               {step > 0 ? (
                 <Button variant="outline" onClick={back} data-testid="button-back">
                   <ArrowLeft className="mr-2 h-4 w-4" />
@@ -267,7 +306,15 @@ export default function Onboarding() {
   );
 }
 
-function Step1({ form, updateField }: { form: FormData; updateField: <K extends keyof FormData>(key: K, value: FormData[K]) => void }) {
+function Step1({
+  form,
+  updateField,
+  toggleArrayItem,
+}: {
+  form: FormData;
+  updateField: <K extends keyof FormData>(key: K, value: FormData[K]) => void;
+  toggleArrayItem: (key: ArrayKeys, item: string, max?: number) => void;
+}) {
   return (
     <div>
       <h2 className="font-serif text-2xl font-bold text-foreground mb-2" data-testid="text-step-title">
@@ -313,6 +360,76 @@ function Step1({ form, updateField }: { form: FormData; updateField: <K extends 
             className="mt-1.5"
           />
         </div>
+
+        <div>
+          <Label className="text-sm font-medium">I identify as</Label>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {GENDER_IDENTITY_OPTIONS.map((opt) => (
+              <Chip
+                key={opt}
+                label={opt}
+                selected={form.genderIdentity === opt}
+                onClick={() => {
+                  updateField("genderIdentity", opt);
+                  if (opt !== "Prefer to self-describe") updateField("genderSelfDescribe", "");
+                }}
+                testId={`chip-gender-${opt.toLowerCase().replace(/\s/g, "-")}`}
+              />
+            ))}
+          </div>
+          {form.genderIdentity === "Prefer to self-describe" && (
+            <Input
+              placeholder="How do you identify?"
+              value={form.genderSelfDescribe}
+              onChange={(e) => updateField("genderSelfDescribe", e.target.value)}
+              data-testid="input-gender-self-describe"
+              className="mt-2"
+            />
+          )}
+        </div>
+
+        <div>
+          <Label className="text-sm font-medium">My pronouns</Label>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {PRONOUNS_OPTIONS.map((opt) => (
+              <Chip
+                key={opt}
+                label={opt}
+                selected={form.pronouns === opt}
+                onClick={() => {
+                  updateField("pronouns", opt);
+                  if (opt !== "Other") updateField("pronounsOther", "");
+                }}
+                testId={`chip-pronoun-${opt.toLowerCase().replace(/\//g, "-")}`}
+              />
+            ))}
+          </div>
+          {form.pronouns === "Other" && (
+            <Input
+              placeholder="Your pronouns"
+              value={form.pronounsOther}
+              onChange={(e) => updateField("pronounsOther", e.target.value)}
+              data-testid="input-pronouns-other"
+              className="mt-2"
+            />
+          )}
+        </div>
+
+        <div>
+          <Label className="text-sm font-medium">I'm interested in</Label>
+          <p className="text-xs text-muted-foreground mt-0.5 mb-2">Select all that apply</p>
+          <div className="flex flex-wrap gap-2">
+            {INTERESTED_IN_OPTIONS.map((opt) => (
+              <Chip
+                key={opt}
+                label={opt}
+                selected={form.interestedIn.includes(opt)}
+                onClick={() => toggleArrayItem("interestedIn", opt)}
+                testId={`chip-interested-${opt.toLowerCase().replace(/\s/g, "-")}`}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -324,7 +441,7 @@ function Step2({
   updateField,
 }: {
   form: FormData;
-  toggleArrayItem: (key: "values" | "nonNegotiables" | "dietaryPreferences", item: string, max?: number) => void;
+  toggleArrayItem: (key: ArrayKeys, item: string, max?: number) => void;
   updateField: <K extends keyof FormData>(key: K, value: FormData[K]) => void;
 }) {
   return (
@@ -373,13 +490,92 @@ function Step2({
   );
 }
 
+function StepDeeper({
+  form,
+  updateField,
+}: {
+  form: FormData;
+  updateField: <K extends keyof FormData>(key: K, value: FormData[K]) => void;
+}) {
+  return (
+    <div>
+      <h2 className="font-serif text-2xl font-bold text-foreground mb-2" data-testid="text-step-title">
+        A Bit Deeper
+      </h2>
+      <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
+        These help us find people you'll genuinely click with.
+      </p>
+
+      <div className="space-y-6">
+        <div>
+          <Label htmlFor="relationshipVision" className="text-sm font-medium">What does a committed relationship look like to you?</Label>
+          <Textarea
+            id="relationshipVision"
+            placeholder="e.g. A partnership where we grow together but keep our own identities"
+            value={form.relationshipVision}
+            onChange={(e) => updateField("relationshipVision", e.target.value.slice(0, 200))}
+            data-testid="input-relationship-vision"
+            className="mt-1.5 resize-none"
+            rows={2}
+          />
+          <p className="text-xs text-muted-foreground mt-1 text-right">{form.relationshipVision.length}/200</p>
+        </div>
+
+        <div>
+          <Label htmlFor="pastLesson" className="text-sm font-medium">A lesson from a past relationship you're grateful for:</Label>
+          <Textarea
+            id="pastLesson"
+            placeholder="e.g. I learned that I need someone who communicates openly"
+            value={form.pastLesson}
+            onChange={(e) => updateField("pastLesson", e.target.value.slice(0, 200))}
+            data-testid="input-past-lesson"
+            className="mt-1.5 resize-none"
+            rows={2}
+          />
+          <p className="text-xs text-muted-foreground mt-1 text-right">{form.pastLesson.length}/200</p>
+        </div>
+
+        <div>
+          <Label className="text-sm font-medium">Your love language?</Label>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {LOVE_LANGUAGE_OPTIONS.map((opt) => (
+              <Chip
+                key={opt}
+                label={opt}
+                selected={form.loveLanguage === opt}
+                onClick={() => updateField("loveLanguage", opt)}
+                testId={`chip-love-${opt.toLowerCase().replace(/\s/g, "-")}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <Label className="text-sm font-medium">How do you handle conflict?</Label>
+          <div className="space-y-2 mt-3">
+            {CONFLICT_STYLE_OPTIONS.map((opt) => (
+              <RadioOption
+                key={opt}
+                label={opt}
+                selected={form.conflictStyle === opt}
+                onClick={() => updateField("conflictStyle", opt)}
+                testId={`radio-conflict-${opt.slice(0, 10).toLowerCase().replace(/\s/g, "-")}`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Step3({
   form,
   toggleArrayItem,
   updateField,
 }: {
   form: FormData;
-  toggleArrayItem: (key: "values" | "nonNegotiables" | "dietaryPreferences", item: string, max?: number) => void;
+  toggleArrayItem: (key: ArrayKeys, item: string, max?: number) => void;
   updateField: <K extends keyof FormData>(key: K, value: FormData[K]) => void;
 }) {
   return (
@@ -449,7 +645,7 @@ function Step4({
   updateField,
 }: {
   form: FormData;
-  toggleArrayItem: (key: "values" | "nonNegotiables" | "dietaryPreferences", item: string, max?: number) => void;
+  toggleArrayItem: (key: ArrayKeys, item: string, max?: number) => void;
   updateField: <K extends keyof FormData>(key: K, value: FormData[K]) => void;
 }) {
   return (

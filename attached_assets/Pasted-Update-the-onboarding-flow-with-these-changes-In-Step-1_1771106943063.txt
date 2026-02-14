@@ -1,0 +1,16 @@
+Update the onboarding flow with these changes:
+
+In Step 1, add three new fields after the name/age/neighborhood:
+- "I identify as" — single select pills: Woman, Man, Nonbinary, Genderqueer, Prefer to self-describe (shows a text input), Prefer not to say
+- "My pronouns" — single select pills: She/her, He/him, They/them, Other (shows text input)
+- "I'm interested in" — multi-select pills (can pick multiple): Women, Men, Nonbinary folks, All genders
+
+Add a new step between the current Step 2 (values) and Step 3 (relationship intentions). Call it "A Bit Deeper" with the subtitle "These help us find people you'll genuinely click with."
+- "What does a committed relationship look like to you?" — short text input (max 200 chars) with placeholder "e.g. A partnership where we grow together but keep our own identities"
+- "A lesson from a past relationship you're grateful for:" — short text input (max 200 chars) with placeholder "e.g. I learned that I need someone who communicates openly"
+- "Your love language?" — single select pills: Words of Affirmation, Quality Time, Acts of Service, Physical Touch, Receiving Gifts
+- "How do you handle conflict?" — single select pills: "Talk it through immediately", "Need space first then talk", "Write my feelings down", "Use humor to defuse"
+
+IMPORTANT: Update the /api/match endpoint's system prompt to include gender and sexuality awareness. The AI should ONLY match people based on compatible sexual orientations and gender preferences — never assume heteronormative pairings. Include the new deeper questions in the matching context so the AI can make more emotionally intelligent matches. The matchReason for each person should reference specific things like shared values, complementary communication styles, or compatible love languages — not generic reasons.
+
+Also update the seed profiles to include these new fields. Make the 12 seed profiles diverse in gender identity and sexual orientation — include straight, gay, lesbian, bisexual, and queer folks across different gender identities.
