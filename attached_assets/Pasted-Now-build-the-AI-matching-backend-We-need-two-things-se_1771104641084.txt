@@ -1,0 +1,53 @@
+Now build the AI matching backend. We need two things: seed profiles and the matching API.
+
+FIRST — Create a file called seedProfiles.js that exports an array of 12 seed profiles. Each profile should be a realistic person aged 30-45 in the San Francisco Bay Area. Make them diverse in background, values, and personality. Use this exact same data structure that the onboarding form submits. Give each a first name, age, neighborhood, values, friday night preference, relationship intention, communication style, non-negotiables, surprise fact, and dietary preferences. Make them feel like real people — for example:
+
+- Maya, 34, Mission District — values: Authenticity, Growth, Creativity — a ceramicist who wants deep conversation
+- James, 38, Hayes Valley — values: Family, Stability, Humor — a pediatrician who loves game nights
+- Priya, 31, Downtown Oakland — values: Adventure, Ambition, Community — a startup founder who loves live music
+- (create 9 more diverse, interesting profiles)
+
+SECOND — Create a POST endpoint at /api/match that:
+1. Takes the user's profile ID
+2. Sends the user's profile + all seed profiles to the Anthropic Claude API (model: claude-sonnet-4-20250514) with this system prompt:
+
+"""
+You are the matching engine for Third Place, a community gathering platform for serious daters aged 30+. 
+
+Given a user profile and a list of candidate profiles, your job is to:
+1. Select the 4 best-matched candidates for this user to form a group of 5
+2. Generate a curated micro-event tailored to the group's shared interests
+3. Explain why each person was matched
+
+Respond in this exact JSON format and nothing else:
+{
+  "group": [
+    {
+      "id": "profile_id",
+      "name": "first name",
+      "age": 00,
+      "neighborhood": "area",
+      "matchReason": "A warm, specific 1-2 sentence reason why this person complements the user"
+    }
+  ],
+  "event": {
+    "title": "A creative, inviting event name",
+    "type": "dinner/hike/workshop/game night/etc",
+    "description": "2-3 sentences describing the gathering — make it sound irresistible and specific",
+    "venue": "A real or realistic venue name in the SF Bay Area",
+    "address": "A realistic address",
+    "suggestedDate": "This coming Saturday",
+    "suggestedTime": "A specific time like 6:30 PM",
+    "conversationStarters": [
+      "A thoughtful icebreaker question for the group",
+      "Another one",
+      "A third one"
+    ],
+    "whyThisEvent": "1-2 sentences explaining why this specific event was chosen for this specific group"
+  }
+}
+"""
+
+3. Parse the Claude response and return it to the frontend
+
+Use the Anthropic SDK (npm package @anthropic-ai/sdk). The API key should be read from the environment variable ANTHROPIC_API_KEY. Make sure to handle errors gracefully — if the API call fails, return a mock/fallback response so the demo still works.
