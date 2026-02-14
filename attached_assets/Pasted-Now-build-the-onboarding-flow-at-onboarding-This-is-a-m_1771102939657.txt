@@ -1,0 +1,35 @@
+Now build the onboarding flow at /onboarding. This is a multi-step form that collects info to match people into compatible groups. Make it feel personal and thoughtful — not like a clinical survey.
+
+The flow should have these steps with smooth transitions between them:
+
+STEP 1 — "Let's Start With You"
+- First name (text input)
+- Age (number input, minimum 25)
+- Neighborhood/area (text input, e.g. "Mission District, SF" or "Downtown Oakland")
+- A warm intro line: "We ask a few questions to find your people. No right answers — just be you."
+
+STEP 2 — "What Matters Most To You?"
+- "Pick your top 3 values" — display as selectable chips/pills (multi-select, max 3):
+  Authenticity, Growth, Family, Adventure, Stability, Humor, Ambition, Spirituality, Creativity, Kindness, Independence, Community
+- "On a Friday night, you'd rather..." — single select:
+  "Cook dinner and deep conversation", "Try a new restaurant", "Live music or comedy show", "Outdoor adventure", "Game night with friends", "Cozy night with a book"
+
+STEP 3 — "Your Relationship Intentions"
+- "What are you looking for?" — single select:
+  "A life partner", "A serious relationship", "Exploring with intention", "Building my community first"
+- "What's your communication style?" — single select:
+  "Direct and honest", "Warm and nurturing", "Playful and witty", "Thoughtful and reserved"
+- "Pick 2 non-negotiables" — multi-select chips (max 2):
+  Emotional availability, Shared life goals, Intellectual connection, Physical chemistry, Financial stability, Same page on kids, Sense of humor, Aligned values
+
+STEP 4 — "Almost There!"
+- "One thing people don't expect about you:" (short text input — this adds personality to their profile)
+- "Any dietary preferences for event planning?" — multi-select:
+  No restrictions, Vegetarian, Vegan, Gluten-free, Halal, Kosher
+- A checkbox: "I'm ready to show up as my authentic self ✓"
+
+Each step should have a progress bar at the top and a "Continue" button. The final step has a "Find My Gathering" button that submits all data.
+
+On submit, POST all the data to /api/profiles as JSON and navigate to /matching (a loading page we'll build next).
+
+Store the submitted profile in the backend's in-memory array. Return the profile with a generated ID.

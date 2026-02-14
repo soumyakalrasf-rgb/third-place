@@ -1,16 +1,30 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { insertProfileSchema } from "@shared/schema";
+import { fromError } from "zod-validation-error";
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  // put application routes here
-  // prefix all routes with /api
+  app.post("/api/profiles", async (req, res) => {
+    const result = insertProfileSchema.safeParse(req.body);
+    if (!result.success) {
+      const validationError = fromError(result.error);
+      return res.status(400).json({ message: validationError.toString() });
+    }
+    const profile = await storage.createProfile(result.data);
+    return res.status(201).json(profile);
+  });
 
-  // use storage to perform CRUD operations on the storage interface
-  // e.g. storage.insertUser(user) or storage.getUserByUsername(username)
+  app.get("/api/profiles/:id", async (req, res) => {
+    const profile = await storage.getProfile(req.params.id);
+    if (!profile) {
+      return res.status(404).json({ message: "Profile not found" });
+    }
+    return res.json(profile);
+  });
 
   return httpServer;
 }
