@@ -7,14 +7,16 @@ import { apiRequest } from "@/lib/queryClient";
 
 const ROTATING_PHRASES = [
   "Analyzing compatibility...",
-  "Curating your group...",
-  "Planning something special...",
+  "Building multiple gatherings for you...",
+  "Matching you with different crews...",
+  "Curating unique events...",
+  "Finding your best options...",
   "Almost ready...",
 ];
 
 interface MatchResult {
-  group: any[];
-  event: any;
+  gatherings: any[];
+  recommendedGathering: number;
 }
 
 export default function Matching() {

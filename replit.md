@@ -23,6 +23,10 @@ Third Place is an AI-powered platform that matches compatible people into small 
 - 2026-02-14: 8 diverse AI event types (dinner, adventure, workshop, cultural, game, brunch, ideas, wellness)
 - 2026-02-14: Trust badges (Background Verified, References Checked) on results match cards
 - 2026-02-14: Safety section on results page with share details, report concern, host note
+- 2026-02-14: Expanded seed profiles to 15 (added Lena, Theo, Nina) with safety fields
+- 2026-02-14: Multi-gathering matching — /api/match returns 3 gatherings with different groups, events, compatibility scores
+- 2026-02-14: Tabbed results page with prev/next navigation, Best Match star badge, per-gathering RSVP with confetti
+- 2026-02-14: Loading screen updated with multi-gathering rotating phrases
 
 ## Project Architecture
 - Frontend: React + Vite + TailwindCSS + shadcn/ui components
@@ -36,13 +40,13 @@ Third Place is an AI-powered platform that matches compatible people into small 
 ## API Endpoints
 - POST /api/profiles - Create a new profile (returns profile with generated id)
 - GET /api/profiles/:id - Get a profile by ID
-- POST /api/match - Match a user with seed profiles via Claude AI (body: {profileId}, returns {group, event})
+- POST /api/match - Match a user with seed profiles via Claude AI (body: {profileId}, returns {gatherings: [{group, event, compatibilityScore}], recommendedGathering})
 
 ## Key Files
-- server/seedProfiles.ts - 12 diverse SF Bay Area seed profiles
+- server/seedProfiles.ts - 15 diverse SF Bay Area seed profiles
 - server/routes.ts - All API routes including AI matching
 - client/src/pages/matching.tsx - Animated loading screen with rotating phrases
-- client/src/pages/results.tsx - Results reveal page with event, group, trust badges, starters, safety section, RSVP + confetti
+- client/src/pages/results.tsx - Tabbed results page with 3 gathering options, Best Match badge, per-gathering RSVP + confetti
 - client/src/pages/onboarding.tsx - 6-step onboarding form with identity, deeper questions, safety & trust
 - client/src/pages/landing.tsx - Landing page
 - client/src/pages/community.tsx - Community dashboard with upcoming events

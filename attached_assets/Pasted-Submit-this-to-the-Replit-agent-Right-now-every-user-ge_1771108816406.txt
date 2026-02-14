@@ -1,0 +1,56 @@
+Submit this to the Replit agent:
+
+```
+Right now every user gets matched into the same single group and event. Fix this so the app generates MULTIPLE different gatherings. Here's what needs to change:
+
+1. UPDATE THE MATCHING API — Change the /api/match system prompt so that instead of creating one group, the AI creates 3 different gatherings from the pool of seed profiles. Each gathering should have a different event type, different people, and a different vibe. The AI should respond with this JSON format:
+
+{
+  "gatherings": [
+    {
+      "group": [
+        {
+          "id": "profile_id",
+          "name": "first name",
+          "age": 00,
+          "neighborhood": "area",
+          "matchReason": "why this person is a great match"
+        }
+      ],
+      "event": {
+        "title": "event name",
+        "type": "dinner/hike/workshop/etc",
+        "description": "2-3 sentences about the gathering",
+        "venue": "venue name in SF Bay Area",
+        "address": "realistic address",
+        "suggestedDate": "a day this coming week",
+        "suggestedTime": "specific time",
+        "conversationStarters": ["starter 1", "starter 2", "starter 3"],
+        "whyThisEvent": "why this event fits this group"
+      },
+      "compatibilityScore": 92
+    }
+  ],
+  "recommendedGathering": 0
+}
+
+The 3 gatherings should be genuinely different — for example:
+- A cozy dinner for people who value deep conversation
+- A weekend hike for the adventurous crew
+- A creative workshop for the artsy group
+
+The user should appear in all 3 because they're compatible with different people in different ways. The AI should set "recommendedGathering" to the index of the best fit.
+
+2. UPDATE THE RESULTS PAGE — Instead of showing one gathering, show all 3 as tabs or cards that the user can browse:
+
+- Show the recommended one first with a "Best Match ⭐" badge
+- Let the user swipe or click between the 3 options
+- Each gathering card shows: event title, event type emoji, description, the group members with match reasons, date/time, venue, and conversation starters
+- The "Count Me In" button should be on each gathering separately so the user picks which one to attend
+
+3. UPDATE THE SEED PROFILES — Make sure there are at least 15 seed profiles (add 3 more if needed) so there are enough people to fill 3 distinct groups without overlap. Make the new profiles diverse in personality and interests so the groups feel genuinely different from each other.
+
+4. LOADING SCREEN UPDATE — Change the rotating text to include: "Building multiple gatherings for you...", "Matching you with different crews...", "Finding your best options..."
+```
+
+This way when you demo it, the judges see you browse between a cozy dinner, a hike, and a pottery class — each with different people and different reasons. Way more impressive than a single result. Go paste it in!
