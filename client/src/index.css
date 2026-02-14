@@ -44,7 +44,7 @@
   --chart-4: 30 55% 55%;
   --chart-5: 200 45% 50%;
   --font-sans: Inter, sans-serif;
-  --font-serif: Georgia, serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
   --font-mono: Menlo, monospace;
   --radius: .5rem;
   --shadow-2xs: 0px 2px 0px 0px hsl(270 35% 15% / 0.02);
