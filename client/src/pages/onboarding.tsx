@@ -6,11 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, ArrowRight, Sparkles, Shield, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Sparkles, Shield, ShieldCheck, Loader2, Lock } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import type { Profile } from "@shared/schema";
+import { SiLinkedin, SiInstagram, SiSpotify } from "react-icons/si";
 import {
   GENDER_IDENTITY_OPTIONS,
   PRONOUNS_OPTIONS,
@@ -83,6 +84,35 @@ const INITIAL_FORM: FormData = {
   references: [
     { name: "", email: "", relationship: "" },
     { name: "", email: "", relationship: "" },
+  ],
+};
+
+const DEMO_PREFILL: FormData = {
+  firstName: "Alex",
+  age: "34",
+  neighborhood: "Mission District, SF",
+  genderIdentity: "Woman",
+  genderSelfDescribe: "",
+  pronouns: "She/her",
+  pronounsOther: "",
+  interestedIn: ["Men", "Women"],
+  values: ["Authenticity", "Growth", "Creativity"],
+  fridayNight: "Try a new restaurant",
+  relationshipVision: "A partnership where we challenge and support each other equally",
+  pastLesson: "I learned that compatibility in values matters more than chemistry alone",
+  loveLanguage: "Quality Time",
+  conflictStyle: "Need space first then talk",
+  lookingFor: "A serious relationship",
+  communicationStyle: "Warm and nurturing",
+  nonNegotiables: ["Emotional availability", "Intellectual connection"],
+  unexpectedThing: "I speak three languages and make pottery on weekends",
+  dietaryPreferences: ["No restrictions"],
+  readyToShowUp: true,
+  communityAgreement: true,
+  backgroundCheck: true,
+  references: [
+    { name: "Jordan Lee", email: "jordan@email.com", relationship: "Close friend" },
+    { name: "Sam Rivera", email: "sam@email.com", relationship: "Colleague" },
   ],
 };
 
@@ -189,6 +219,8 @@ function ProgressBar({ step, total }: { step: number; total: number }) {
 }
 
 export default function Onboarding() {
+  const [showConnect, setShowConnect] = useState(true);
+  const [importing, setImporting] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormData>(INITIAL_FORM);
   const [, navigate] = useLocation();
@@ -212,6 +244,15 @@ export default function Onboarding() {
       if (max && arr.length >= max) return prev;
       return { ...prev, [key]: [...arr, item] };
     });
+  };
+
+  const handleImport = (source: string) => {
+    setImporting(source);
+    setTimeout(() => {
+      setForm(DEMO_PREFILL);
+      setImporting(null);
+      setShowConnect(false);
+    }, 1500);
   };
 
   const canContinue = (): boolean => {
@@ -270,7 +311,131 @@ export default function Onboarding() {
   };
   const back = () => {
     if (step > 0) setStep(step - 1);
+    else setShowConnect(true);
   };
+
+  if (showConnect) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-start px-4 pt-24 pb-8 sm:py-24">
+        <div className="w-full max-w-lg">
+          <Card className="border-0 bg-card/60 overflow-visible">
+            <CardContent className="pt-8 pb-8 px-5 sm:px-8">
+              {importing ? (
+                <div className="flex flex-col items-center justify-center py-16" style={{ animation: "connectFadeIn 0.3s ease-out" }}>
+                  <Loader2 className="h-10 w-10 text-primary animate-spin mb-5" />
+                  <p className="text-lg font-medium text-foreground" data-testid="text-importing">
+                    Importing your profile...
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    This will just take a moment.
+                  </p>
+                </div>
+              ) : (
+                <div style={{ animation: "connectFadeIn 0.4s ease-out" }}>
+                  <div className="text-center mb-8">
+                    <h2 className="font-serif text-2xl font-bold text-foreground mb-2" data-testid="text-connect-title">
+                      Speed up your setup
+                    </h2>
+                    <p className="text-muted-foreground text-sm leading-relaxed" data-testid="text-connect-subtitle">
+                      Connect your profiles to pre-fill your information. We never post on your behalf.
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => handleImport("linkedin")}
+                      data-testid="button-import-linkedin"
+                      className="w-full flex items-center gap-3 rounded-md border border-border bg-card text-foreground text-sm font-medium transition-colors cursor-pointer hover-elevate"
+                      style={{ padding: "12px 16px" }}
+                    >
+                      <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0" style={{ backgroundColor: "#0A66C2" }}>
+                        <SiLinkedin className="h-5 w-5 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <span className="block font-medium">LinkedIn</span>
+                        <span className="block text-xs text-muted-foreground">Import career & interests</span>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => handleImport("instagram")}
+                      data-testid="button-import-instagram"
+                      className="w-full flex items-center gap-3 rounded-md border border-border bg-card text-foreground text-sm font-medium transition-colors cursor-pointer hover-elevate"
+                      style={{ padding: "12px 16px" }}
+                    >
+                      <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0" style={{ background: "linear-gradient(45deg, #F58529, #DD2A7B, #8134AF, #515BD4)" }}>
+                        <SiInstagram className="h-5 w-5 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <span className="block font-medium">Instagram</span>
+                        <span className="block text-xs text-muted-foreground">Import interests & lifestyle</span>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => handleImport("spotify")}
+                      data-testid="button-import-spotify"
+                      className="w-full flex items-center gap-3 rounded-md border border-border bg-card text-foreground text-sm font-medium transition-colors cursor-pointer hover-elevate"
+                      style={{ padding: "12px 16px" }}
+                    >
+                      <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0" style={{ backgroundColor: "#1DB954" }}>
+                        <SiSpotify className="h-5 w-5 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <span className="block font-medium">Spotify</span>
+                        <span className="block text-xs text-muted-foreground">Import music taste</span>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => handleImport("goodreads")}
+                      data-testid="button-import-goodreads"
+                      className="w-full flex items-center gap-3 rounded-md border border-border bg-card text-foreground text-sm font-medium transition-colors cursor-pointer hover-elevate"
+                      style={{ padding: "12px 16px" }}
+                    >
+                      <div className="w-9 h-9 rounded-md flex items-center justify-center shrink-0" style={{ backgroundColor: "#5C4033" }}>
+                        <svg viewBox="0 0 24 24" className="h-5 w-5 text-white" fill="currentColor">
+                          <path d="M11.43 23.995c-3.608-.208-6.274-2.077-7.926-5.371-.515-1.026-.939-2.17-1.273-3.341-.333-1.17-.538-2.397-.62-3.681a18.5 18.5 0 0 1 .08-3.29c.142-1.14.377-2.218.703-3.235.326-1.017.75-1.955 1.272-2.813A8.8 8.8 0 0 1 5.6 .403C6.457-.195 7.467-.267 8.556.403c.619.38 1.104.904 1.458 1.572.354.668.616 1.39.787 2.168.17.778.26 1.584.267 2.418.008.834-.045 1.654-.16 2.459v.028l.011-.012c.236-.413.524-.79.865-1.133.34-.342.726-.638 1.156-.887.43-.25.892-.443 1.389-.58a5.51 5.51 0 0 1 1.53-.207c.598.013 1.173.113 1.725.3.552.186 1.063.456 1.534.808.47.353.884.789 1.24 1.309.357.52.637 1.118.84 1.794.204.676.318 1.428.343 2.255.025.828-.046 1.715-.213 2.661-.237 1.337-.666 2.518-1.288 3.543a8.1 8.1 0 0 1-2.192 2.506c-.871.67-1.836 1.133-2.893 1.389-1.058.256-2.145.256-3.263 0a6.4 6.4 0 0 1-1.475-.591 5.8 5.8 0 0 1-1.204-.907l-.064-.068v.04c0 .132-.005.263-.014.39-.01.128-.033.282-.068.464h-2.125v-.104zm2.24-7.612c.196-.595.338-1.232.427-1.912.089-.68.122-1.375.099-2.087-.024-.711-.107-1.413-.25-2.105a10.5 10.5 0 0 0-.601-1.963 6 6 0 0 0-.978-1.636 3.5 3.5 0 0 0-1.3-.994c-.476-.223-.99-.293-1.543-.208-.552.084-1.04.323-1.464.716a5 5 0 0 0-1.075 1.461 9.4 9.4 0 0 0-.718 1.962 13 13 0 0 0-.378 2.18c-.065.741-.055 1.46.029 2.155.084.696.238 1.341.464 1.937.226.596.533 1.112.921 1.547.388.435.876.74 1.463.916.587.175 1.137.17 1.65-.015a4.3 4.3 0 0 0 1.338-.825 5.6 5.6 0 0 0 1.02-1.274c.29-.495.52-1.016.686-1.563l.21-.292z" />
+                        </svg>
+                      </div>
+                      <div className="text-left">
+                        <span className="block font-medium">Goodreads</span>
+                        <span className="block text-xs text-muted-foreground">Import reading interests</span>
+                      </div>
+                    </button>
+                  </div>
+
+                  <div className="text-center mt-6">
+                    <button
+                      onClick={() => setShowConnect(false)}
+                      className="text-sm text-muted-foreground transition-colors cursor-pointer underline underline-offset-2"
+                      data-testid="button-skip-connect"
+                    >
+                      Skip — I'll fill it out myself
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-1.5 mt-6 pt-4 border-t border-border">
+                    <Lock className="h-3 w-3 text-muted-foreground/60" />
+                    <p className="text-[11px] text-muted-foreground/60 leading-relaxed" data-testid="text-connect-privacy">
+                      Your data is only used for matching. We never store your social credentials.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        <style>{`
+          @keyframes connectFadeIn {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start px-4 pt-24 pb-8 sm:py-24">
